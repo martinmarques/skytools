@@ -23,6 +23,39 @@ end;
 $$ language plpgsql security definer;
 
 
+create or replace function pgq.register_consumer_at(
+    x_queue_name text,
+    x_consumer_name text,
+    x_tick_pos bigint)
+returns integer as $$
+-- ----------------------------------------------------------------------
+-- Function: pgq.register_consumer_at(3)
+-- 
+-- Extended registration, allows to specify tick_id.
+-- 
+-- Note:
+-- For usage in special situations.
+-- 
+-- Parameters:
+-- x_queue_name - Name of a queue
+-- x_consumer_name - Name of consumer
+-- x_tick_pos - Tick ID
+-- 
+-- Returns:
+-- 0/1 whether consumer has already registered.
+-- Calls:
+-- None
+-- Tables directly manipulated:
+-- update/insert - pgq.subscription
+-- 
+-- Fix bug introduced for compatibility from skytools 2.1 subscribers to
+-- skytools 3.x providers
+-- ----------------------------------------------------------------------
+begin
+    return pgq.register_consumer(x_queue_name, x_consumer_id, x_tick_pos);
+end;
+
+
 create or replace function pgq.register_consumer(
     x_queue_name text,
     x_consumer_name text,
